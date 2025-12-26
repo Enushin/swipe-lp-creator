@@ -10,6 +10,11 @@ export const metadata: Metadata = {
   keywords: ["LP", "ランディングページ", "スワイプ", "AI", "広告"],
   authors: [{ name: "Swipe LP Creator" }],
   robots: "index, follow",
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
 };
 
 export const viewport: Viewport = {

@@ -8,12 +8,14 @@ import {
   signOut,
   resetPassword,
   subscribeToAuthState,
+  isFirebaseConfigured,
 } from "@/lib/firebase/auth";
 
 interface AuthState {
   user: User | null;
   loading: boolean;
   error: string | null;
+  isConfigured: boolean;
 }
 
 interface UseAuthReturn extends AuthState {
@@ -33,11 +35,29 @@ export function useAuth(): UseAuthReturn {
     user: null,
     loading: true,
     error: null,
+    isConfigured: true,
   });
 
   useEffect(() => {
+    // Check if Firebase is configured
+    const configured = isFirebaseConfigured();
+    if (!configured) {
+      setState({
+        user: null,
+        loading: false,
+        error: "Firebase設定が見つかりません。環境変数を設定してください。",
+        isConfigured: false,
+      });
+      return;
+    }
+
     const unsubscribe = subscribeToAuthState((user) => {
-      setState((prev) => ({ ...prev, user, loading: false }));
+      setState((prev) => ({
+        ...prev,
+        user,
+        loading: false,
+        isConfigured: true,
+      }));
     });
 
     return () => unsubscribe();

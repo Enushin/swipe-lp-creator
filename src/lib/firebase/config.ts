@@ -27,6 +27,11 @@ const firebaseConfig = {
   measurementId: getEnvVar("NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID"),
 };
 
+// Check if Firebase is configured
+export function isFirebaseConfigured(): boolean {
+  return !!(firebaseConfig.apiKey && firebaseConfig.projectId);
+}
+
 let app: FirebaseApp | null = null;
 let authInstance: Auth | null = null;
 let dbInstance: Firestore | null = null;

@@ -10,19 +10,19 @@ const mockLP: LP = {
   slides: [
     {
       id: "slide-1",
-      imageUrl: "/images/placeholder-1.jpg",
+      imageUrl: "https://picsum.photos/seed/slide1/430/932",
       alt: "スライド1",
       order: 0,
     },
     {
       id: "slide-2",
-      imageUrl: "/images/placeholder-2.jpg",
+      imageUrl: "https://picsum.photos/seed/slide2/430/932",
       alt: "スライド2",
       order: 1,
     },
     {
       id: "slide-3",
-      imageUrl: "/images/placeholder-3.jpg",
+      imageUrl: "https://picsum.photos/seed/slide3/430/932",
       alt: "スライド3",
       order: 2,
     },
