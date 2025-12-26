@@ -24,7 +24,7 @@ class IDEIntegrationServer {
         capabilities: {
           tools: {},
         },
-      },
+      }
     );
 
     this.setupToolHandlers();
@@ -175,7 +175,7 @@ class IDEIntegrationServer {
                 diagnostics,
               },
               null,
-              2,
+              2
             ),
           },
         ],
@@ -216,7 +216,7 @@ class IDEIntegrationServer {
       const tempDir = os.tmpdir();
       const tempFile = path.join(
         tempDir,
-        `mcp_exec_${Date.now()}.${this.getExtension(language)}`,
+        `mcp_exec_${Date.now()}.${this.getExtension(language)}`
       );
       fs.writeFileSync(tempFile, code);
 
@@ -252,7 +252,7 @@ class IDEIntegrationServer {
                 language,
               },
               null,
-              2,
+              2
             ),
           },
         ],
@@ -270,7 +270,7 @@ class IDEIntegrationServer {
                 stdout: error.stdout || "",
               },
               null,
-              2,
+              2
             ),
           },
         ],
@@ -311,7 +311,7 @@ class IDEIntegrationServer {
                 formatted: formattedCode,
               },
               null,
-              2,
+              2
             ),
           },
         ],

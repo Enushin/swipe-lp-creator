@@ -99,7 +99,7 @@ export class NewAgent extends BaseAgent {
         `Error: ${(error as Error).message}`,
         "TechLead",
         "Sev.2-High",
-        { error: (error as Error).stack },
+        { error: (error as Error).stack }
       );
       throw error;
     }

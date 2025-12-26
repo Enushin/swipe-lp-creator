@@ -25,7 +25,7 @@ class GitHubEnhancedServer {
         capabilities: {
           tools: {},
         },
-      },
+      }
     );
 
     // Initialize Octokit
@@ -39,7 +39,7 @@ class GitHubEnhancedServer {
     const repo = process.env.REPOSITORY;
     if (!repo || !repo.includes("/")) {
       throw new Error(
-        'REPOSITORY environment variable must be in format "owner/repo"',
+        'REPOSITORY environment variable must be in format "owner/repo"'
       );
     }
     [this.owner, this.repo] = repo.split("/");
@@ -238,7 +238,7 @@ class GitHubEnhancedServer {
               },
             },
             null,
-            2,
+            2
           ),
         },
       ],
@@ -331,7 +331,7 @@ class GitHubEnhancedServer {
               tasks,
             },
             null,
-            2,
+            2
           ),
         },
       ],
@@ -357,7 +357,7 @@ class GitHubEnhancedServer {
 
     const progressBar = this.createProgressBar(
       progress.completed,
-      progress.total,
+      progress.total
     );
 
     const comment = `
@@ -393,7 +393,7 @@ ${progress.currentTask ? `**Current Task**: ${progress.currentTask}` : ""}
               progress,
             },
             null,
-            2,
+            2
           ),
         },
       ],
@@ -463,7 +463,7 @@ ${progress.currentTask ? `**Current Task**: ${progress.currentTask}` : ""}
               },
             },
             null,
-            2,
+            2
           ),
         },
       ],
@@ -506,7 +506,7 @@ ${progress.currentTask ? `**Current Task**: ${progress.currentTask}` : ""}
         total: reviews.data.length,
         approved: reviews.data.filter((r) => r.state === "APPROVED").length,
         changesRequested: reviews.data.filter(
-          (r) => r.state === "CHANGES_REQUESTED",
+          (r) => r.state === "CHANGES_REQUESTED"
         ).length,
       },
       checks: {
@@ -516,7 +516,7 @@ ${progress.currentTask ? `**Current Task**: ${progress.currentTask}` : ""}
         failed: checks.data.check_runs.filter((c) => c.conclusion === "failure")
           .length,
         pending: checks.data.check_runs.filter(
-          (c) => c.status === "in_progress" || c.status === "queued",
+          (c) => c.status === "in_progress" || c.status === "queued"
         ).length,
       },
     };

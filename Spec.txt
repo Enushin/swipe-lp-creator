@@ -1,0 +1,129 @@
+project_definition:
+  name: "NanobananaPRO (AI-Powered Swipe LP Builder)"
+  philosophy:
+    core_concept: "画像がある人はアップロードだけ。ない人はAIで0から生成。最短で「売れるスワイプLP」を発行する。"
+    technical_stance: "Weak & Fast Architecture" 
+    description: "Next.jsの静的エクスポートとCloudflareのエッジ機能を組み合わせた、サーバーレスかつ低コストなLP構築プラットフォーム"
+
+architecture:
+  infrastructure:
+    hosting: "Cloudflare Pages"
+    deployment_mode: "Static Export (output: 'export')"
+    routing_strategy: "Single Page Application (SPA) Fallback" # 動的ルート /p/[id] をクライアント側で処理
+    backend_logic: "Cloudflare Functions" # APIキー隠蔽とAI処理用 (/functions ディレクトリ)
+  
+  frontend_tech:
+    framework: "Next.js (App Router)"
+    language: "TypeScript"
+    styling: "Tailwind CSS"
+    ui_library: "Swiper.js (Mobile interaction), @dnd-kit/core (Sortable)"
+    rendering: "Client Side Rendering (CSR) focus"
+
+  backend_services:
+    baas_provider: "Firebase"
+    auth: "Firebase Authentication"
+    database: "Cloud Firestore"
+    storage: "Firebase Storage"
+  
+  ai_engine:
+    text_model: "Google Gemini 1.5 Pro/Flash (via Google AI Studio API)"
+    image_model: "Google Imagen 3 (via Vertex AI or compatible API)"
+    execution_context: "Executed on Cloudflare Functions (Serverless)"
+
+data_schema:
+  firestore_collections:
+    lps:
+      doc_id: "{lp_id}" # URLの末尾になるID (例: swipe-001)
+      fields:
+        owner_id: "{uid}"
+        title: "string (管理用)"
+        status: "string (draft | published)"
+        view_mode: "enum (swipe | scroll)" # スワイプ型 or 縦スクロール型
+        created_at: "timestamp"
+        
+        # LPの中身（スライドデータ）
+        slides:
+          type: "array"
+          structure:
+            - id: "uuid"
+              image_url: "string (Firebase Storage URL)"
+              caption_text: "string (AI生成時のプロンプトやメモ)"
+              order: "number"
+        
+        # コンバージョン周りの設定
+        cta_config:
+          text: "string"
+          url: "string"
+          bg_color: "string"
+          text_color: "string"
+          is_visible: "boolean"
+          
+        # 広告計測タグ（必須機能）
+        tracking_tags:
+          head_html: "string (GTM script, Pixel base code)"
+          body_html: "string (GTM noscript)"
+
+functional_requirements:
+  
+  1_public_viewer_app: # ユーザー閲覧画面 /p/[id]
+    features:
+      - "Full-screen mobile layout (Height: 100vh, Width: 100%)"
+      - "PC Layout: Centered container (Max-width 430px) with blurred background"
+      - "Swiper.js implementation with 'progressbar' pagination"
+      - "Persistent CTA Bar (Fixed bottom, z-index high)"
+      - "Head/Body injection: Firestoreから取得したtracking_tagsをHTMLに反映"
+    logic:
+      - "Fetch data from Firestore based on URL ID"
+      - "If view_mode is 'scroll', render simple vertical image list"
+
+  2_admin_dashboard: # 管理画面
+    features:
+      - "LP List View: Create, Edit, Delete, Toggle Publish Status"
+      - "Preview Button: Open generated URL"
+
+  3_lp_editor: # 編集画面
+    mode_a_manual_upload:
+      - "Bulk upload images to Firebase Storage"
+      - "Drag & Drop to reorder slides"
+    
+    mode_b_ai_generation:
+      - "Input Form: Product Name, Target Audience, Key Appeal"
+      - "Process: Call Cloudflare Function -> Gemini (Scripting) -> Imagen (Image Gen)"
+      - "Result: Automatically populate the slide list with generated images"
+      - "Regenerate Option: Ability to regenerate single slide image"
+
+    settings_panel:
+      - "CTA Button customization"
+      - "Tracking Tag input (Head/Body)"
+      - "View Mode Switch (Swipe/Scroll)"
+
+api_implementation_details:
+  cloudflare_functions:
+    path: "/functions/api/generate-lp.ts"
+    method: "POST"
+    process:
+      1: "Receive product info from frontend"
+      2: "Prompt Gemini to create a 5-10 slide storyboard (Hook -> Problem -> Solution -> CTA)"
+      3: "For each slide, generate an image prompt"
+      4: "Call Image Generation API concurrently"
+      5: "Upload generated images to Storage (or return URLs)"
+      6: "Return JSON structure to frontend"
+
+development_roadmap:
+  phase_1_infrastructure:
+    - "Setup Next.js with 'output: export'"
+    - "Setup Firebase (Auth/Firestore/Storage)"
+    - "Setup Cloudflare Pages deployment"
+  
+  phase_2_core_viewer:
+    - "Implement Swiper Viewer (Mobile/PC responsive)"
+    - "Implement Data Fetching from Firestore"
+  
+  phase_3_editor_manual:
+    - "Implement Image Uploader & DnD Sorting"
+    - "Implement CTA & Tag Settings"
+  
+  phase_4_ai_integration:
+    - "Setup Cloudflare Functions for API Proxy"
+    - "Implement Gemini/Imagen Logic"
+    - "Connect AI Generator to Editor UI"

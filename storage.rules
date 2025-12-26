@@ -1,0 +1,49 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidImage() {
+      return request.resource.contentType.matches('image/.*')
+        && request.resource.size < 10 * 1024 * 1024; // 10MB limit
+    }
+
+    // User uploaded images
+    match /users/{userId}/lps/{lpId}/{allPaths=**} {
+      // Anyone can read (for public LP viewing)
+      allow read: if true;
+
+      // Only owner can write
+      allow write: if isOwner(userId) && isValidImage();
+
+      // Only owner can delete
+      allow delete: if isOwner(userId);
+    }
+
+    // AI generated images
+    match /ai-generated/{userId}/{allPaths=**} {
+      // Anyone can read (for public LP viewing)
+      allow read: if true;
+
+      // Only owner can write
+      allow write: if isOwner(userId) && isValidImage();
+
+      // Only owner can delete
+      allow delete: if isOwner(userId);
+    }
+
+    // Temporary uploads (for processing)
+    match /temp/{userId}/{allPaths=**} {
+      allow read, write: if isOwner(userId);
+      allow delete: if isOwner(userId);
+    }
+  }
+}

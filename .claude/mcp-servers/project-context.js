@@ -26,7 +26,7 @@ class ProjectContextServer {
         capabilities: {
           tools: {},
         },
-      },
+      }
     );
 
     this.projectRoot = process.cwd();
@@ -161,7 +161,7 @@ class ProjectContextServer {
           const stats = fs.statSync(itemPath);
 
           lines.push(
-            `${prefix}${connector}${item}${stats.isDirectory() ? "/" : ""}`,
+            `${prefix}${connector}${item}${stats.isDirectory() ? "/" : ""}`
           );
 
           if (stats.isDirectory()) {
@@ -185,7 +185,7 @@ class ProjectContextServer {
               tree: tree.join("\n"),
             },
             null,
-            2,
+            2
           ),
         },
       ],
@@ -238,12 +238,12 @@ class ProjectContextServer {
     const settingsPath = path.join(
       this.projectRoot,
       ".claude",
-      "settings.example.json",
+      "settings.example.json"
     );
     const localSettingsPath = path.join(
       this.projectRoot,
       ".claude",
-      "settings.local.json",
+      "settings.local.json"
     );
 
     let config = {};
@@ -285,7 +285,7 @@ class ProjectContextServer {
 
     const analyzeDirectory = (
       dir,
-      stats = { files: 0, lines: 0, byExtension: {} },
+      stats = { files: 0, lines: 0, byExtension: {} }
     ) => {
       const items = fs.readdirSync(dir);
 
@@ -341,7 +341,7 @@ class ProjectContextServer {
               byExtension: stats.byExtension,
             },
             null,
-            2,
+            2
           ),
         },
       ],
@@ -359,7 +359,7 @@ class ProjectContextServer {
         {
           encoding: "utf8",
           cwd: this.projectRoot,
-        },
+        }
       );
 
       const commitList = commits.split("\n").map((line) => {
@@ -390,7 +390,7 @@ class ProjectContextServer {
                 latestChanges: stats,
               },
               null,
-              2,
+              2
             ),
           },
         ],

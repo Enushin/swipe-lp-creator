@@ -34,7 +34,7 @@ const server = new Server(
     capabilities: {
       tools: {},
     },
-  },
+  }
 );
 
 /**
@@ -280,7 +280,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         ].filter(Boolean);
 
         const result = executeMiyabiCommand(
-          `init ${projectName} ${flags.join(" ")}`,
+          `init ${projectName} ${flags.join(" ")}`
         );
 
         return {
