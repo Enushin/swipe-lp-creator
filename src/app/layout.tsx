@@ -2,6 +2,9 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL || "https://swipe-lp-creator.pages.dev"
+  ),
   title: "Swipe LP Creator",
   description: "AI-Powered Swipe LP Builder - 最短で売れるスワイプLPを作成",
   keywords: ["LP", "ランディングページ", "スワイプ", "AI", "広告"],

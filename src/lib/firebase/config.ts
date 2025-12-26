@@ -88,9 +88,11 @@ export const storage = {
   },
 };
 
-export default {
+const firebaseHelpers = {
   getApp: getFirebaseApp,
   getAuth: getAuthInstance,
   getDb: getDbInstance,
   getStorage: getStorageInstance,
 };
+
+export default firebaseHelpers;
