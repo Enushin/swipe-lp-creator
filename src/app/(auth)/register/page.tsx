@@ -125,7 +125,7 @@ export default function RegisterPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-lg bg-primary-600 py-3 font-bold text-white transition-colors hover:bg-primary-700 disabled:opacity-50"
+          className="bg-primary-600 hover:bg-primary-700 w-full rounded-lg py-3 font-bold text-white transition-colors disabled:opacity-50"
         >
           {loading ? "作成中..." : "アカウントを作成"}
         </button>

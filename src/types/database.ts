@@ -56,6 +56,13 @@ export interface UserDocument {
   createdAt: Timestamp;
   plan: UserPlanDocument;
   aiCredits: number;
+  limits?: {
+    maxLPs: number;
+    maxSlidesPerLP: number;
+    aiGenerationsPerMonth: number;
+    aiGenerationsUsed: number;
+    resetAt: Timestamp;
+  };
 }
 
 export type UserPlanDocument = "free" | "pro" | "enterprise";

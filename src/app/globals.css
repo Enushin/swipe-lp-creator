@@ -1,99 +1,318 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ═══════════════════════════════════════════════════════════════
+   DESIGN SYSTEM: Liquid Glass
+   Premium dark theme with glass-morphism and fluid gradients
+   ═══════════════════════════════════════════════════════════════ */
+
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 255, 255, 255;
-  --background-end-rgb: 255, 255, 255;
+  /* Core Colors */
+  --color-brand: #0ea5e9;
+  --color-brand-light: #38bdf8;
+  --color-brand-dark: #0284c7;
+  --color-accent-violet: #8b5cf6;
+  --color-accent-fuchsia: #d946ef;
+  --color-accent-rose: #f43f5e;
+
+  /* Surfaces */
+  --surface-base: #0a0a0b;
+  --surface-raised: #141416;
+  --surface-overlay: #1f1f23;
+
+  /* Glass */
+  --glass-light: rgba(255, 255, 255, 0.04);
+  --glass-medium: rgba(255, 255, 255, 0.08);
+  --glass-strong: rgba(255, 255, 255, 0.12);
+  --glass-border: rgba(255, 255, 255, 0.08);
+
+  /* Text */
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+
+  /* Gradients */
+  --gradient-brand: linear-gradient(135deg, #0ea5e9, #8b5cf6);
+  --gradient-accent: linear-gradient(135deg, #8b5cf6, #d946ef);
+  --gradient-mesh:
+    radial-gradient(at 40% 20%, rgba(14, 165, 233, 0.15) 0px, transparent 50%),
+    radial-gradient(at 80% 0%, rgba(139, 92, 246, 0.12) 0px, transparent 50%),
+    radial-gradient(at 0% 50%, rgba(217, 70, 239, 0.08) 0px, transparent 50%);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
+/* ═══════════════════════════════════════════════════════════════
+   BASE STYLES
+   ═══════════════════════════════════════════════════════════════ */
 
 html,
 body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
+  font-family: "Inter", "Hiragino Kaku Gothic ProN", sans-serif;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: var(--surface-base);
+  color: var(--text-primary);
   min-height: 100vh;
   min-height: 100dvh;
 }
 
-/* スワイプビューア用スタイル */
+/* Selection */
+::selection {
+  background: var(--color-brand);
+  color: white;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--glass-strong);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--glass-medium);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TYPOGRAPHY
+   ═══════════════════════════════════════════════════════════════ */
+
+.font-display {
+  font-family: "Outfit", "Hiragino Sans", sans-serif;
+}
+
+.text-gradient {
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-accent {
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   GLASS COMPONENTS
+   ═══════════════════════════════════════════════════════════════ */
+
+.glass {
+  background: var(--glass-light);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+}
+
+.glass-card {
+  background: var(--glass-light);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--glass-border);
+  border-radius: 1.5rem;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BUTTONS
+   ═══════════════════════════════════════════════════════════════ */
+
+.btn-primary {
+  @apply relative overflow-hidden;
+  @apply rounded-2xl px-8 py-4;
+  @apply font-semibold text-white;
+  @apply transition-all duration-300 ease-out;
+  font-family: "Outfit", sans-serif;
+  background: var(--gradient-brand);
+  box-shadow: 0 4px 20px rgba(14, 165, 233, 0.35);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(14, 165, 233, 0.45);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  @apply rounded-2xl px-8 py-4;
+  @apply font-semibold;
+  @apply transition-all duration-300 ease-out;
+  font-family: "Outfit", sans-serif;
+  background: var(--glass-light);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(12px);
+  color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+  background: var(--glass-medium);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SWIPE VIEWER STYLES
+   ═══════════════════════════════════════════════════════════════ */
+
 .swipe-container {
   width: 100%;
   height: 100vh;
   height: 100dvh;
   overflow: hidden;
+  position: relative;
+  background: var(--surface-base);
+  overscroll-behavior: none;
+  touch-action: none;
 }
 
-/* CTAボタン用スタイル */
-.cta-button {
-  @apply fixed bottom-4 left-4 right-4 z-50;
-  @apply bg-primary-600 font-bold text-white;
-  @apply rounded-xl px-6 py-4;
-  @apply shadow-lg hover:bg-primary-700;
-  @apply transition-all duration-200;
-  @apply text-center text-lg;
-}
-
-/* プログレスバー */
+/* Progress Bar */
 .progress-bar {
-  @apply fixed left-0 right-0 top-0 z-50;
-  @apply h-1 bg-gray-200;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  z-index: 100;
 }
 
 .progress-bar-fill {
-  @apply h-full bg-primary-600;
-  @apply transition-all duration-300 ease-out;
+  height: 100%;
+  background: var(--gradient-brand);
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.progress-bar-fill::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: -2px;
+  bottom: -2px;
+  width: 20px;
+  background: white;
+  border-radius: 50%;
+  box-shadow:
+    0 0 10px var(--color-brand),
+    0 0 20px var(--color-brand);
+  opacity: 0.8;
+}
+
+/* CTA Button */
+.cta-button {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 90;
+  padding: 1.25rem;
+  padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
+  background: linear-gradient(to top, var(--surface-base), transparent);
+}
+
+.cta-button a,
+.cta-button button {
+  @apply block w-full rounded-2xl px-6 py-4;
+  @apply text-center text-lg font-semibold text-white;
+  @apply transition-all duration-300;
+  font-family: "Outfit", sans-serif;
+  background: var(--gradient-brand);
+  box-shadow: 0 8px 30px rgba(14, 165, 233, 0.4);
+}
+
+.cta-button a:hover,
+.cta-button button:hover {
+  transform: scale(1.02);
+  box-shadow: 0 12px 40px rgba(14, 165, 233, 0.5);
+}
+
+.cta-button a:active,
+.cta-button button:active {
+  transform: scale(0.98);
+}
+
+/* Slide Counter */
+.slide-counter {
+  position: absolute;
+  bottom: calc(90px + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 80;
+  padding: 0.5rem 1.25rem;
+  border-radius: 2rem;
+  background: var(--glass-medium);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  font-family: "Outfit", sans-serif;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--text-primary);
 }
 
 /* PC表示最適化 */
 @media (min-width: 768px) {
+  .viewer-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: var(--surface-base);
+    position: relative;
+  }
+
   .viewer-container {
-    @apply mx-auto max-w-[430px];
-    @apply relative;
+    max-width: 430px;
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    border-left: 1px solid var(--glass-border);
+    border-right: 1px solid var(--glass-border);
+    box-shadow: 0 0 100px rgba(14, 165, 233, 0.1);
   }
 
   .viewer-backdrop {
-    @apply fixed inset-0 -z-10;
-    @apply bg-cover bg-center;
-    filter: blur(20px) brightness(0.7);
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-size: cover;
+    background-position: center;
+    filter: blur(80px) brightness(0.25) saturate(1.3);
+    transform: scale(1.3);
+  }
+
+  .viewer-backdrop::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--gradient-mesh);
   }
 }
 
-/* フォーム入力 */
-input,
-textarea,
-select {
-  @apply rounded-lg border border-gray-300;
-  @apply px-4 py-2;
-  @apply focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary-500;
-}
+/* ═══════════════════════════════════════════════════════════════
+   SWIPER OVERRIDES
+   ═══════════════════════════════════════════════════════════════ */
 
-/* カード */
-.card {
-  @apply rounded-xl bg-white shadow-md;
-  @apply p-4;
-}
-
-/* Swiper オーバーライド */
 .swiper {
   width: 100%;
   height: 100%;
@@ -103,24 +322,151 @@ select {
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .swiper-pagination-progressbar {
-  background: rgba(0, 0, 0, 0.25) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  height: 3px !important;
 }
 
 .swiper-pagination-progressbar-fill {
-  background: var(--swiper-theme-color, #2563eb) !important;
+  background: var(--gradient-brand) !important;
 }
 
-/* Scroll Viewer */
+/* ═══════════════════════════════════════════════════════════════
+   FORMS
+   ═══════════════════════════════════════════════════════════════ */
+
+input,
+textarea,
+select {
+  @apply w-full rounded-xl px-4 py-3;
+  @apply transition-all duration-200;
+  background: var(--glass-light);
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-muted);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+  background: var(--glass-medium);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CARDS
+   ═══════════════════════════════════════════════════════════════ */
+
+.card {
+  @apply rounded-2xl p-6;
+  background: var(--glass-light);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(20px);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  background: var(--glass-medium);
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SCROLL VIEWER
+   ═══════════════════════════════════════════════════════════════ */
+
 .scroll-viewer {
   height: 100vh;
   height: 100dvh;
   overflow: hidden;
+  scroll-snap-type: y mandatory;
+  background: var(--surface-base);
+  overscroll-behavior: contain;
+  touch-action: pan-y;
 }
 
-/* Screen Reader Only */
+.scroll-viewer > * {
+  scroll-snap-align: start;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════════════════════════════ */
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 40px rgba(14, 165, 233, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 60px rgba(14, 165, 233, 0.5);
+  }
+}
+
+@keyframes gradient-shift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 8s ease infinite;
+}
+
+/* Staggered entrance */
+.stagger-1 {
+  animation-delay: 0.1s;
+}
+.stagger-2 {
+  animation-delay: 0.2s;
+}
+.stagger-3 {
+  animation-delay: 0.3s;
+}
+.stagger-4 {
+  animation-delay: 0.4s;
+}
+.stagger-5 {
+  animation-delay: 0.5s;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   UTILITIES
+   ═══════════════════════════════════════════════════════════════ */
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -131,4 +477,16 @@ select {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+.mesh-bg {
+  background: var(--gradient-mesh);
+}
+
+.glow-brand {
+  box-shadow: 0 0 60px rgba(14, 165, 233, 0.3);
+}
+
+.glow-accent {
+  box-shadow: 0 0 60px rgba(139, 92, 246, 0.3);
 }

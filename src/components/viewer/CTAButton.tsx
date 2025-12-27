@@ -29,23 +29,62 @@ export function CTAButton({ config, className }: CTAButtonProps) {
     }
   };
 
+  // Determine if using custom colors or default gradient
+  const useCustomColors = backgroundColor && backgroundColor !== "#2563eb";
+
   return (
-    <button
-      onClick={handleClick}
+    <div
       className={cn(
-        "cta-button",
-        position === "fixed"
-          ? "fixed bottom-4 left-4 right-4"
-          : "relative w-full",
+        position === "fixed" ? "cta-button" : "relative w-full p-4",
         className
       )}
-      style={{
-        backgroundColor: backgroundColor || "#2563eb",
-        color: textColor || "#ffffff",
-      }}
     >
-      {text || "詳しく見る"}
-    </button>
+      <button
+        onClick={handleClick}
+        className={cn(
+          "relative w-full overflow-hidden",
+          "rounded-2xl px-6 py-4",
+          "text-center text-lg font-semibold",
+          "transition-all duration-300",
+          "hover:scale-[1.02] active:scale-[0.98]",
+          "font-display"
+        )}
+        style={
+          useCustomColors
+            ? {
+                backgroundColor: backgroundColor,
+                color: textColor || "#ffffff",
+                boxShadow: `0 8px 30px ${backgroundColor}66`,
+              }
+            : {
+                background: "var(--gradient-brand)",
+                color: "#ffffff",
+                boxShadow: "0 8px 30px rgba(14, 165, 233, 0.4)",
+              }
+        }
+      >
+        {/* Shine effect */}
+        <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 transition-opacity duration-300 hover:opacity-100" />
+
+        {/* Button text */}
+        <span className="relative flex items-center justify-center gap-2">
+          {text || "詳しく見る"}
+          <svg
+            className="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M13 7l5 5m0 0l-5 5m5-5H6"
+            />
+          </svg>
+        </span>
+      </button>
+    </div>
   );
 }
 

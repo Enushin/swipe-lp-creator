@@ -17,11 +17,15 @@ export function DashboardHeader({ children }: DashboardHeaderProps) {
   };
 
   return (
-    <header className="border-b border-gray-200 bg-white">
+    <header className="glass bg-[var(--surface-base)]/80 sticky top-0 z-50 border-b border-[var(--glass-border)] backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
         <div className="flex items-center gap-6">
-          <Link href="/dashboard" className="text-xl font-bold text-gray-900">
-            Swipe LP Creator
+          <Link
+            href="/dashboard"
+            className="font-display text-xl font-bold text-[var(--text-primary)]"
+          >
+            <span className="text-gradient">Swipe LP</span>{" "}
+            <span className="text-[var(--text-secondary)]">Creator</span>
           </Link>
         </div>
 
@@ -30,10 +34,12 @@ export function DashboardHeader({ children }: DashboardHeaderProps) {
 
           {user && (
             <div className="flex items-center gap-3">
-              <span className="text-sm text-gray-600">{user.email}</span>
+              <span className="hidden text-sm text-[var(--text-muted)] sm:block">
+                {user.email}
+              </span>
               <button
                 onClick={handleSignOut}
-                className="text-sm text-gray-500 hover:text-gray-700"
+                className="rounded-lg px-3 py-1.5 text-sm text-[var(--text-secondary)] transition-colors hover:bg-[var(--glass-light)] hover:text-[var(--text-primary)]"
               >
                 ログアウト
               </button>

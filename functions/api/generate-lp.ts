@@ -1,9 +1,13 @@
 // Cloudflare Pages Function: Generate LP with AI
 // Uses OpenAI for storyboard generation and Gemini for image generation
+import { enforceAIGenerationLimit, logAIGeneration } from "./_firebase";
 
 interface Env {
   OPENAI_API_KEY: string;
   GOOGLE_AI_API_KEY: string;
+  GEMINI_API_KEY?: string;
+  FIREBASE_PROJECT_ID?: string;
+  AUTH_REQUIRED?: string;
 }
 
 interface GenerateRequest {
@@ -12,6 +16,7 @@ interface GenerateRequest {
   keyBenefits: string[];
   tone?: string;
   slideCount?: number;
+  lpId?: string;
 }
 
 interface StoryboardSlide {
@@ -166,9 +171,13 @@ ${prompt}
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const { request, env } = context;
+  const authRequired = env.AUTH_REQUIRED === "true" || env.AUTH_REQUIRED === "1";
+  const user = (context as { data?: { user?: { uid: string; token: string } } })
+    .data?.user;
+  let input: GenerateRequest | null = null;
 
   try {
-    const input: GenerateRequest = await request.json();
+    input = await request.json();
 
     // Validate input
     if (
@@ -197,17 +206,42 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       );
     }
 
+    if (authRequired && (!user || !env.FIREBASE_PROJECT_ID)) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "Unauthorized",
+        }),
+        { status: 401, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    if (user && env.FIREBASE_PROJECT_ID) {
+      const limitResult = await enforceAIGenerationLimit({
+        projectId: env.FIREBASE_PROJECT_ID,
+        idToken: user.token,
+        uid: user.uid,
+      });
+      if (!limitResult.allowed) {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: "AI generation limit reached",
+          }),
+          { status: 429, headers: { "Content-Type": "application/json" } }
+        );
+      }
+    }
+
     // Generate storyboard
     const storyboard = await generateStoryboard(input, env.OPENAI_API_KEY);
 
     // Generate images if Gemini API is available
     let images: { slideNumber: number; imageUrl: string }[] = [];
-    if (env.GOOGLE_AI_API_KEY) {
+    const geminiKey = env.GOOGLE_AI_API_KEY || env.GEMINI_API_KEY;
+    if (geminiKey) {
       const imagePromises = storyboard.map(async (slide) => {
-        const imageUrl = await generateImage(
-          slide.imagePrompt,
-          env.GOOGLE_AI_API_KEY
-        );
+        const imageUrl = await generateImage(slide.imagePrompt, geminiKey);
         return imageUrl ? { slideNumber: slide.slideNumber, imageUrl } : null;
       });
 
@@ -221,12 +255,37 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       images,
     };
 
+    if (user && env.FIREBASE_PROJECT_ID) {
+      await logAIGeneration({
+        projectId: env.FIREBASE_PROJECT_ID,
+        idToken: user.token,
+        uid: user.uid,
+        lpId: input.lpId,
+        type: "generate",
+        success: true,
+        model: "gpt-4o",
+        slideCount: storyboard.length,
+      });
+    }
+
     return new Response(JSON.stringify(response), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
     console.error("Generate LP error:", error);
+    if (user && env.FIREBASE_PROJECT_ID) {
+      await logAIGeneration({
+        projectId: env.FIREBASE_PROJECT_ID,
+        idToken: user.token,
+        uid: user.uid,
+        lpId: input?.lpId,
+        type: "generate",
+        success: false,
+        model: "gpt-4o",
+        slideCount: input?.slideCount,
+      });
+    }
     return new Response(
       JSON.stringify({
         success: false,
