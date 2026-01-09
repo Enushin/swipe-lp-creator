@@ -24,6 +24,16 @@ export async function uploadImage(file: File, path: string): Promise<string> {
   return getDownloadURL(storageRef);
 }
 
+export async function uploadImageBlob(
+  blob: Blob,
+  path: string
+): Promise<string> {
+  const storage = getStorageInstance();
+  const storageRef = ref(storage, path);
+  await uploadBytes(storageRef, blob);
+  return getDownloadURL(storageRef);
+}
+
 export async function uploadImageWithProgress(
   file: File,
   path: string,

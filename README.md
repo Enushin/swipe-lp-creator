@@ -106,7 +106,13 @@ NEXT_PUBLIC_FIREBASE_APP_ID=1:123456789:web:abc123
 
 # AI API Keys (Cloudflare Functions用)
 OPENAI_API_KEY=sk-...
-GEMINI_API_KEY=AI...
+GOOGLE_AI_API_KEY=AI... # or GEMINI_API_KEY
+
+# Firebase Project (Cloudflare Functions用)
+FIREBASE_PROJECT_ID=your-project-id
+
+# Auth Gate (Cloudflare Functions用)
+AUTH_REQUIRED=true
 
 # App URL
 NEXT_PUBLIC_APP_URL=https://your-domain.pages.dev
@@ -195,7 +201,9 @@ Cloudflare Pages の Settings > Environment variables で以下を設定:
 | Variable         | Description           |
 | ---------------- | --------------------- |
 | `OPENAI_API_KEY` | OpenAI API Key        |
-| `GEMINI_API_KEY` | Google Gemini API Key |
+| `GOOGLE_AI_API_KEY` | Google Gemini API Key |
+| `FIREBASE_PROJECT_ID` | Firebase Project ID |
+| `AUTH_REQUIRED` | Require auth for AI endpoints |
 
 ---
 

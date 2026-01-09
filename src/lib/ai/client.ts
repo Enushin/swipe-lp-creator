@@ -7,6 +7,7 @@ export interface GenerateLPRequest {
   keyBenefits: string[];
   tone?: string;
   slideCount?: number;
+  lpId?: string;
 }
 
 export interface StoryboardSlide {
@@ -27,12 +28,17 @@ export interface GenerateLPResponse {
 export interface RegenerateSlideRequest {
   prompt: string;
   style?: string;
+  lpId?: string;
 }
 
 export interface RegenerateSlideResponse {
   success: boolean;
   imageUrl?: string;
   error?: string;
+}
+
+export interface AIRequestOptions {
+  idToken?: string;
 }
 
 // Get API base URL
@@ -50,7 +56,8 @@ function getApiBaseUrl(): string {
 
 // Generate LP with AI
 export async function generateLP(
-  request: GenerateLPRequest
+  request: GenerateLPRequest,
+  options: AIRequestOptions = {}
 ): Promise<GenerateLPResponse> {
   const baseUrl = getApiBaseUrl();
 
@@ -59,6 +66,7 @@ export async function generateLP(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        ...(options.idToken ? { Authorization: `Bearer ${options.idToken}` } : {}),
       },
       body: JSON.stringify(request),
     });
@@ -80,7 +88,8 @@ export async function generateLP(
 
 // Regenerate a single slide image
 export async function regenerateSlide(
-  request: RegenerateSlideRequest
+  request: RegenerateSlideRequest,
+  options: AIRequestOptions = {}
 ): Promise<RegenerateSlideResponse> {
   const baseUrl = getApiBaseUrl();
 
@@ -89,6 +98,7 @@ export async function regenerateSlide(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        ...(options.idToken ? { Authorization: `Bearer ${options.idToken}` } : {}),
       },
       body: JSON.stringify(request),
     });

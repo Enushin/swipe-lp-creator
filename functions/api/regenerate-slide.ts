@@ -1,12 +1,17 @@
 // Cloudflare Pages Function: Regenerate a single slide image
+import { enforceAIGenerationLimit, logAIGeneration } from "./_firebase";
 
 interface Env {
   GOOGLE_AI_API_KEY: string;
+  GEMINI_API_KEY?: string;
+  FIREBASE_PROJECT_ID?: string;
+  AUTH_REQUIRED?: string;
 }
 
 interface RegenerateRequest {
   prompt: string;
   style?: string;
+  lpId?: string;
 }
 
 interface RegenerateResponse {
@@ -17,9 +22,13 @@ interface RegenerateResponse {
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const { request, env } = context;
+  const authRequired = env.AUTH_REQUIRED === "true" || env.AUTH_REQUIRED === "1";
+  const user = (context as { data?: { user?: { uid: string; token: string } } })
+    .data?.user;
+  let input: RegenerateRequest | null = null;
 
   try {
-    const input: RegenerateRequest = await request.json();
+    input = await request.json();
 
     if (!input.prompt) {
       return new Response(
@@ -31,7 +40,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       );
     }
 
-    if (!env.GOOGLE_AI_API_KEY) {
+    const geminiKey = env.GOOGLE_AI_API_KEY || env.GEMINI_API_KEY;
+    if (!geminiKey) {
       return new Response(
         JSON.stringify({
           success: false,
@@ -39,6 +49,33 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         }),
         { status: 500, headers: { "Content-Type": "application/json" } }
       );
+    }
+
+    if (authRequired && (!user || !env.FIREBASE_PROJECT_ID)) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "Unauthorized",
+        }),
+        { status: 401, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    if (user && env.FIREBASE_PROJECT_ID) {
+      const limitResult = await enforceAIGenerationLimit({
+        projectId: env.FIREBASE_PROJECT_ID,
+        idToken: user.token,
+        uid: user.uid,
+      });
+      if (!limitResult.allowed) {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: "AI generation limit reached",
+          }),
+          { status: 429, headers: { "Content-Type": "application/json" } }
+        );
+      }
     }
 
     // Enhanced prompt
@@ -52,7 +89,7 @@ ${input.prompt}
 `;
 
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${env.GOOGLE_AI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${geminiKey}`,
       {
         method: "POST",
         headers: {
@@ -106,12 +143,35 @@ ${input.prompt}
       imageUrl,
     };
 
+    if (user && env.FIREBASE_PROJECT_ID) {
+      await logAIGeneration({
+        projectId: env.FIREBASE_PROJECT_ID,
+        idToken: user.token,
+        uid: user.uid,
+        lpId: input.lpId,
+        type: "regenerate",
+        success: true,
+        model: "gemini-2.0-flash-exp",
+      });
+    }
+
     return new Response(JSON.stringify(result), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
     console.error("Regenerate slide error:", error);
+    if (user && env.FIREBASE_PROJECT_ID) {
+      await logAIGeneration({
+        projectId: env.FIREBASE_PROJECT_ID,
+        idToken: user.token,
+        uid: user.uid,
+        lpId: input?.lpId,
+        type: "regenerate",
+        success: false,
+        model: "gemini-2.0-flash-exp",
+      });
+    }
     return new Response(
       JSON.stringify({
         success: false,
