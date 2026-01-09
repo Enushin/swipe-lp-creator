@@ -27,11 +27,12 @@ export default function DashboardPage() {
   // Show configuration error when Firebase is not set up
   if (!isConfigured) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gray-50">
-        <div className="mx-auto max-w-md rounded-lg bg-white p-8 text-center shadow-lg">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-yellow-100">
+      <div className="flex min-h-screen items-center justify-center bg-[var(--surface-base)]">
+        <div className="mesh-bg fixed inset-0 -z-10" />
+        <div className="glass-card mx-4 max-w-md p-8 text-center">
+          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-amber-500/20 to-orange-500/20">
             <svg
-              className="h-8 w-8 text-yellow-600"
+              className="h-10 w-10 text-amber-400"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -44,33 +45,29 @@ export default function DashboardPage() {
               />
             </svg>
           </div>
-          <h2 className="mb-2 text-xl font-bold text-gray-900">
+          <h2 className="mb-3 font-display text-xl font-bold text-[var(--text-primary)]">
             Firebase設定が必要です
           </h2>
-          <p className="mb-4 text-gray-600">
+          <p className="mb-6 text-[var(--text-secondary)]">
             アプリケーションを使用するには、Firebase環境変数を設定してください。
           </p>
-          <div className="rounded-md bg-gray-100 p-4 text-left">
-            <p className="mb-2 text-sm font-medium text-gray-700">
+          <div className="rounded-xl bg-[var(--surface-raised)] p-4 text-left">
+            <p className="mb-3 text-sm font-medium text-[var(--text-secondary)]">
               必要な環境変数:
             </p>
-            <code className="text-xs text-gray-600">
-              NEXT_PUBLIC_FIREBASE_API_KEY
-              <br />
-              NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
-              <br />
-              NEXT_PUBLIC_FIREBASE_PROJECT_ID
-              <br />
-              NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
-              <br />
-              NEXT_PUBLIC_FIREBASE_APP_ID
+            <code className="block space-y-1 font-mono text-xs text-[var(--text-muted)]">
+              <span className="block">NEXT_PUBLIC_FIREBASE_API_KEY</span>
+              <span className="block">NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN</span>
+              <span className="block">NEXT_PUBLIC_FIREBASE_PROJECT_ID</span>
+              <span className="block">NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET</span>
+              <span className="block">NEXT_PUBLIC_FIREBASE_APP_ID</span>
             </code>
           </div>
-          <p className="mt-4 text-sm text-gray-500">
+          <p className="mt-6 text-sm text-[var(--text-muted)]">
             詳細は{" "}
             <a
               href="https://github.com/Enushin/swipe-lp-creator#environment-setup"
-              className="text-primary-600 hover:underline"
+              className="text-[var(--color-brand)] hover:underline"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -86,10 +83,10 @@ export default function DashboardPage() {
   // Show loading while checking auth
   if (authLoading) {
     return (
-      <div className="flex h-screen items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-[var(--surface-base)]">
         <div className="text-center">
-          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent" />
-          <p className="mt-4 text-gray-500">読み込み中...</p>
+          <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-[var(--glass-strong)] border-t-[var(--color-brand)]" />
+          <p className="mt-4 text-[var(--text-muted)]">読み込み中...</p>
         </div>
       </div>
     );
@@ -101,15 +98,24 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="relative min-h-screen bg-[var(--surface-base)]">
+      {/* Background effects */}
+      <div className="mesh-bg fixed inset-0 -z-10" />
+      <div className="-z-5 fixed left-0 top-0 h-[400px] w-[400px] rounded-full bg-[var(--color-brand)] opacity-5 blur-[100px]" />
+      <div className="-z-5 fixed bottom-0 right-0 h-[300px] w-[300px] rounded-full bg-[var(--color-accent-violet)] opacity-5 blur-[80px]" />
+
       <DashboardHeader>
         <CreateLPButton onCreate={createLP} />
       </DashboardHeader>
 
       <main className="mx-auto max-w-7xl px-4 py-8">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">マイLP</h1>
-          <p className="mt-1 text-gray-500">作成したLPの管理・編集ができます</p>
+        <div className="mb-8">
+          <h1 className="font-display text-3xl font-bold text-[var(--text-primary)]">
+            マイLP
+          </h1>
+          <p className="mt-2 text-[var(--text-secondary)]">
+            作成したLPの管理・編集ができます
+          </p>
         </div>
 
         <LPGrid

@@ -33,7 +33,7 @@ export function CreateLPButton({ onCreate }: CreateLPButtonProps) {
     <>
       <button
         onClick={() => setIsModalOpen(true)}
-        className="flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2 font-medium text-white transition-colors hover:bg-primary-700"
+        className="btn-primary flex items-center gap-2 px-4 py-2 text-sm"
       >
         <svg
           className="h-5 w-5"
@@ -53,10 +53,12 @@ export function CreateLPButton({ onCreate }: CreateLPButtonProps) {
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="mx-4 w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
-            <h2 className="text-xl font-bold text-gray-900">新規LP作成</h2>
-            <p className="mt-2 text-sm text-gray-500">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="glass-card mx-4 w-full max-w-md p-6">
+            <h2 className="font-display text-xl font-bold text-[var(--text-primary)]">
+              新規LP作成
+            </h2>
+            <p className="mt-2 text-sm text-[var(--text-secondary)]">
               LPのタイトルを入力してください
             </p>
 
@@ -65,7 +67,7 @@ export function CreateLPButton({ onCreate }: CreateLPButtonProps) {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="例: 新商品プロモーション"
-              className="mt-4 w-full"
+              className="focus:ring-[var(--color-brand)]/20 mt-4 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--glass-light)] px-4 py-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] transition-all focus:border-[var(--color-brand)] focus:outline-none focus:ring-2"
               autoFocus
               onKeyDown={(e) => {
                 if (e.key === "Enter" && title.trim()) {
@@ -80,7 +82,7 @@ export function CreateLPButton({ onCreate }: CreateLPButtonProps) {
                   setIsModalOpen(false);
                   setTitle("");
                 }}
-                className="rounded-lg px-4 py-2 text-gray-700 hover:bg-gray-100"
+                className="btn-secondary px-4 py-2 text-sm"
                 disabled={creating}
               >
                 キャンセル
@@ -88,7 +90,7 @@ export function CreateLPButton({ onCreate }: CreateLPButtonProps) {
               <button
                 onClick={handleCreate}
                 disabled={!title.trim() || creating}
-                className="rounded-lg bg-primary-600 px-4 py-2 text-white hover:bg-primary-700 disabled:opacity-50"
+                className="btn-primary px-4 py-2 text-sm disabled:opacity-50"
               >
                 {creating ? "作成中..." : "作成"}
               </button>

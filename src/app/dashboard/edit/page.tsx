@@ -37,7 +37,7 @@ function EditPageContent() {
     return (
       <div className="flex h-screen items-center justify-center">
         <div className="text-center">
-          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent" />
+          <div className="border-primary-600 mx-auto h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" />
           <p className="mt-4 text-gray-500">読み込み中...</p>
         </div>
       </div>
@@ -57,7 +57,7 @@ function EditPageContent() {
           </p>
           <Link
             href="/dashboard"
-            className="mt-4 inline-block text-primary-600 hover:underline"
+            className="text-primary-600 mt-4 inline-block hover:underline"
           >
             ダッシュボードに戻る
           </Link>
@@ -79,7 +79,7 @@ function EditPageContent() {
           </p>
           <Link
             href="/dashboard"
-            className="mt-4 inline-block text-primary-600 hover:underline"
+            className="text-primary-600 mt-4 inline-block hover:underline"
           >
             ダッシュボードに戻る
           </Link>
@@ -155,7 +155,7 @@ export default function EditLPPage() {
       fallback={
         <div className="flex h-screen items-center justify-center">
           <div className="text-center">
-            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent" />
+            <div className="border-primary-600 mx-auto h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" />
             <p className="mt-4 text-gray-500">読み込み中...</p>
           </div>
         </div>

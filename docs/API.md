@@ -29,6 +29,7 @@
 
 - **Firebase SDK操作**: Firebase Authentication (JWT)
 - **Cloudflare Functions**: Bearer Token (Firebase ID Token)
+- **AUTH_REQUIRED が有効な場合**: すべての AI API に Authorization ヘッダー必須
 
 ```typescript
 // リクエストヘッダー
@@ -54,10 +55,10 @@ AIを使用してLP全体を自動生成する。
 interface GenerateLPRequest {
   productName: string; // 商品名（必須）
   targetAudience: string; // ターゲット層（必須）
-  keyAppeal: string; // 訴求ポイント（必須）
-  toneAndManner?: string; // トーン&マナー（オプション）
+  keyBenefits: string[]; // 訴求ポイント（必須）
+  tone?: string; // トーン&マナー（オプション）
   slideCount?: number; // スライド数（デフォルト: 8）
-  imageStyle?: string; // 画像スタイル（オプション）
+  lpId?: string; // LP ID（オプション）
 }
 ```
 
@@ -67,10 +68,10 @@ interface GenerateLPRequest {
 {
   "productName": "オーガニック美容液 ナノバナナ",
   "targetAudience": "30代女性、敏感肌、オーガニック志向",
-  "keyAppeal": "天然成分100%、3日で肌荒れ改善、無添加・無香料",
-  "toneAndManner": "高級感、信頼感、ナチュラル",
+  "keyBenefits": ["天然成分100%", "3日で肌荒れ改善", "無添加・無香料"],
+  "tone": "高級感、信頼感、ナチュラル",
   "slideCount": 8,
-  "imageStyle": "ミニマル、白背景、高品質写真風"
+  "lpId": "beauty-serum-2025"
 }
 ```
 
@@ -79,27 +80,9 @@ interface GenerateLPRequest {
 ```typescript
 interface GenerateLPResponse {
   success: boolean;
-  data: {
-    slides: GeneratedSlide[];
-    storyboard: StoryboardItem[];
-    metadata: {
-      totalTokensUsed: number;
-      generationTimeMs: number;
-      models: {
-        text: string;
-        image: string;
-      };
-    };
-  };
+  storyboard?: StoryboardItem[];
+  images?: { slideNumber: number; imageUrl: string }[];
   error?: string;
-}
-
-interface GeneratedSlide {
-  id: string;
-  imageUrl: string; // 生成された画像のURL
-  imagePrompt: string; // 使用したプロンプト
-  caption: string; // スライドの説明
-  order: number;
 }
 
 interface StoryboardItem {
@@ -116,41 +99,21 @@ interface StoryboardItem {
 ```json
 {
   "success": true,
-  "data": {
-    "slides": [
-      {
-        "id": "gen-001",
-        "imageUrl": "https://storage.googleapis.com/.../slide1.webp",
-        "imagePrompt": "A close-up of a woman with radiant, glowing skin...",
-        "caption": "フック：あなたの肌、輝いていますか？",
-        "order": 0
-      },
-      {
-        "id": "gen-002",
-        "imageUrl": "https://storage.googleapis.com/.../slide2.webp",
-        "imagePrompt": "Split image showing dry, irritated skin vs healthy skin...",
-        "caption": "問題提起：乾燥・くすみ・肌荒れ...その悩み、解決できます",
-        "order": 1
-      }
-    ],
-    "storyboard": [
-      {
-        "slideNumber": 1,
-        "purpose": "Hook",
-        "headline": "あなたの肌、輝いていますか？",
-        "description": "視聴者の注意を引き、肌の美しさへの関心を喚起",
-        "imagePrompt": "A close-up of a woman with radiant, glowing skin..."
-      }
-    ],
-    "metadata": {
-      "totalTokensUsed": 4521,
-      "generationTimeMs": 45000,
-      "models": {
-        "text": "gpt-5.2-thinking-high",
-        "image": "gemini-3-pro-image-preview"
-      }
+  "storyboard": [
+    {
+      "slideNumber": 1,
+      "purpose": "Hook",
+      "headline": "あなたの肌、輝いていますか？",
+      "description": "視聴者の注意を引き、肌の美しさへの関心を喚起",
+      "imagePrompt": "A close-up of a woman with radiant, glowing skin..."
     }
-  }
+  ],
+  "images": [
+    {
+      "slideNumber": 1,
+      "imageUrl": "data:image/png;base64,..."
+    }
+  ]
 }
 ```
 
@@ -186,10 +149,9 @@ interface StoryboardItem {
 
 ```typescript
 interface RegenerateSlideRequest {
-  lpId: string; // LP ID
-  slideId: string; // 再生成するスライドID
-  customPrompt?: string; // カスタムプロンプト（オプション）
-  keepContext: boolean; // 前後のスライドを考慮するか
+  prompt: string; // 再生成プロンプト（必須）
+  style?: string; // スタイル（オプション）
+  lpId?: string; // LP ID（オプション）
 }
 ```
 
@@ -197,10 +159,9 @@ interface RegenerateSlideRequest {
 
 ```json
 {
-  "lpId": "beauty-serum-2025",
-  "slideId": "gen-003",
-  "customPrompt": "もっと明るい雰囲気で、笑顔の女性を含めて",
-  "keepContext": true
+  "prompt": "もっと明るい雰囲気で、笑顔の女性を含めて",
+  "style": "Clean, minimalist, Japanese aesthetic",
+  "lpId": "beauty-serum-2025"
 }
 ```
 
@@ -209,13 +170,7 @@ interface RegenerateSlideRequest {
 ```typescript
 interface RegenerateSlideResponse {
   success: boolean;
-  data: {
-    slide: GeneratedSlide;
-    previousVersion?: {
-      imageUrl: string;
-      prompt: string;
-    };
-  };
+  imageUrl?: string;
   error?: string;
 }
 ```
