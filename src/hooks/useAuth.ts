@@ -5,6 +5,7 @@ import { User } from "firebase/auth";
 import {
   signUp,
   signIn,
+  signInWithGoogle,
   signOut,
   resetPassword,
   subscribeToAuthState,
@@ -25,6 +26,7 @@ interface UseAuthReturn extends AuthState {
     displayName?: string
   ) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
+  signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   clearError: () => void;
@@ -90,6 +92,18 @@ export function useAuth(): UseAuthReturn {
     }
   }, []);
 
+  const handleSignInWithGoogle = useCallback(async () => {
+    setState((prev) => ({ ...prev, loading: true, error: null }));
+    try {
+      await signInWithGoogle();
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Googleログインに失敗しました";
+      setState((prev) => ({ ...prev, error: message, loading: false }));
+      throw err;
+    }
+  }, []);
+
   const handleSignOut = useCallback(async () => {
     setState((prev) => ({ ...prev, loading: true, error: null }));
     try {
@@ -123,6 +137,7 @@ export function useAuth(): UseAuthReturn {
     ...state,
     signUp: handleSignUp,
     signIn: handleSignIn,
+    signInWithGoogle: handleSignInWithGoogle,
     signOut: handleSignOut,
     resetPassword: handleResetPassword,
     clearError,

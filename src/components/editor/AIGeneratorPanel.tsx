@@ -4,11 +4,17 @@ import { useState } from "react";
 import {
   generateLP,
   storyboardToSlides,
+  base64ToBlob,
   type GenerateLPRequest,
 } from "@/lib/ai";
+import { uploadImageBlob } from "@/lib/firebase/storage";
+import { getAuthInstance, isFirebaseConfigured } from "@/lib/firebase/config";
 import type { Slide } from "@/types";
 
 interface AIGeneratorPanelProps {
+  lpId: string;
+  userId: string;
+  startOrder?: number;
   onGenerate: (slides: Slide[]) => void;
   disabled?: boolean;
 }
@@ -24,6 +30,9 @@ const TONE_OPTIONS = [
 const SLIDE_COUNT_OPTIONS = [5, 7, 10];
 
 export function AIGeneratorPanel({
+  lpId,
+  userId,
+  startOrder = 0,
   onGenerate,
   disabled = false,
 }: AIGeneratorPanelProps) {
@@ -67,10 +76,19 @@ export function AIGeneratorPanel({
     setProgress("ストーリーボードを生成中...");
 
     try {
-      const response = await generateLP({
-        ...formData,
-        keyBenefits: benefits,
-      });
+      const authInstance = isFirebaseConfigured() ? getAuthInstance() : null;
+      const idToken = authInstance?.currentUser
+        ? await authInstance.currentUser.getIdToken()
+        : undefined;
+
+      const response = await generateLP(
+        {
+          ...formData,
+          keyBenefits: benefits,
+          lpId,
+        },
+        idToken ? { idToken } : undefined
+      );
 
       if (!response.success || !response.storyboard) {
         throw new Error(response.error || "生成に失敗しました");
@@ -78,10 +96,31 @@ export function AIGeneratorPanel({
 
       setProgress("画像を生成中...");
 
+      let images = response.images || [];
+      if (images.some((img) => img.imageUrl.startsWith("data:"))) {
+        setProgress("画像をアップロード中...");
+        const uploadTasks = images.map(async (img) => {
+          if (!img.imageUrl.startsWith("data:")) return img;
+          try {
+            const blob = await base64ToBlob(img.imageUrl);
+            const filename = `ai-${img.slideNumber}.png`;
+            const path = `ai-generated/${userId}/lps/${lpId}/${Date.now()}_${filename}`;
+            const uploadedUrl = await uploadImageBlob(blob, path);
+            return { ...img, imageUrl: uploadedUrl };
+          } catch (uploadError) {
+            console.error("AI image upload failed:", uploadError);
+            return img;
+          }
+        });
+        images = await Promise.all(uploadTasks);
+      }
+
       // Convert to slides
-      const slides = storyboardToSlides(
-        response.storyboard,
-        response.images || []
+      const slides = storyboardToSlides(response.storyboard, images).map(
+        (slide, index) => ({
+          ...slide,
+          order: startOrder + index,
+        })
       );
 
       onGenerate(slides as Slide[]);

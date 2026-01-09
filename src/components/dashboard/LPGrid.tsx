@@ -20,10 +20,10 @@ export function LPGrid({
     return (
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="card animate-pulse">
-            <div className="aspect-[9/16] w-full rounded-lg bg-gray-200" />
-            <div className="mt-3 h-5 w-3/4 rounded bg-gray-200" />
-            <div className="mt-2 h-4 w-1/2 rounded bg-gray-200" />
+          <div key={i} className="glass-card animate-pulse p-4">
+            <div className="aspect-[9/16] w-full rounded-xl bg-[var(--glass-medium)]" />
+            <div className="mt-4 h-5 w-3/4 rounded-lg bg-[var(--glass-medium)]" />
+            <div className="mt-2 h-4 w-1/2 rounded-lg bg-[var(--glass-light)]" />
           </div>
         ))}
       </div>
@@ -32,10 +32,10 @@ export function LPGrid({
 
   if (lps.length === 0) {
     return (
-      <div className="rounded-xl border-2 border-dashed border-gray-300 p-12 text-center">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+      <div className="glass-card p-12 text-center">
+        <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-[var(--glass-medium)]">
           <svg
-            className="h-8 w-8 text-gray-400"
+            className="h-10 w-10 text-[var(--text-muted)]"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -48,10 +48,10 @@ export function LPGrid({
             />
           </svg>
         </div>
-        <h3 className="text-lg font-medium text-gray-900">
+        <h3 className="font-display text-lg font-medium text-[var(--text-primary)]">
           LPがまだありません
         </h3>
-        <p className="mt-1 text-gray-500">
+        <p className="mt-2 text-[var(--text-secondary)]">
           新規作成ボタンから最初のLPを作成しましょう
         </p>
       </div>

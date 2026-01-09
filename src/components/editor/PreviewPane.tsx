@@ -80,7 +80,7 @@ export function PreviewPane({ lp }: PreviewPaneProps) {
           <Link
             href={`/p/${lp.id}?preview=true`}
             target="_blank"
-            className="flex items-center gap-1 text-sm text-primary-600 hover:underline"
+            className="text-primary-600 flex items-center gap-1 text-sm hover:underline"
           >
             <svg
               className="h-4 w-4"

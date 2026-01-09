@@ -7,12 +7,14 @@ import type { Slide } from "@/types";
 interface ImageUploaderProps {
   lpId: string;
   userId: string;
+  startOrder?: number;
   onUploadComplete: (slides: Slide[]) => void;
 }
 
 export function ImageUploader({
   lpId,
   userId,
+  startOrder = 0,
   onUploadComplete,
 }: ImageUploaderProps) {
   const [uploading, setUploading] = useState(false);
@@ -46,7 +48,7 @@ export function ImageUploader({
             newSlides.push({
               id: `slide-${timestamp}-${i}`,
               imageUrl: url,
-              order: i,
+              order: startOrder + i,
               alt: file.name.replace(/\.[^/.]+$/, ""),
             });
           }
@@ -62,7 +64,7 @@ export function ImageUploader({
       setUploading(false);
       setProgress(0);
     },
-    [lpId, userId, onUploadComplete]
+    [lpId, userId, startOrder, onUploadComplete]
   );
 
   const handleDrop = useCallback(
@@ -112,13 +114,13 @@ export function ImageUploader({
 
         {uploading ? (
           <div>
-            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent" />
+            <div className="border-primary-600 mx-auto h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" />
             <p className="mt-2 text-sm text-gray-500">
               アップロード中... {progress}%
             </p>
             <div className="mx-auto mt-2 h-2 w-3/4 overflow-hidden rounded-full bg-gray-200">
               <div
-                className="h-full bg-primary-600 transition-all"
+                className="bg-primary-600 h-full transition-all"
                 style={{ width: `${progress}%` }}
               />
             </div>

@@ -55,6 +55,7 @@ export interface AIGenerationRequest {
   keyBenefits: string[];
   tone?: string;
   slideCount?: number;
+  lpId?: string;
 }
 
 export interface AIGenerationResult {

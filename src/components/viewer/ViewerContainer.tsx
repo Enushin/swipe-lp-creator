@@ -28,6 +28,13 @@ export function ViewerContainer({ lp }: ViewerContainerProps) {
   const { slides, cta, tracking, settings } = lp;
   const ViewerComponent =
     settings.viewerType === "scroll" ? ScrollViewer : SwipeViewer;
+  const viewerProps = {
+    slides,
+    onSlideChange: setCurrentSlide,
+    showProgressBar: settings.showProgressBar ?? true,
+    autoPlay: settings.autoPlay ?? false,
+    autoPlayInterval: settings.autoPlayInterval ?? 3000,
+  };
 
   // Get first slide image for PC backdrop
   const backdropImage = slides[0]?.imageUrl;
@@ -37,21 +44,34 @@ export function ViewerContainer({ lp }: ViewerContainerProps) {
       {/* Tracking Scripts */}
       <TrackingScripts config={tracking} />
 
-      {/* PC Layout with blur backdrop */}
-      {isPC && backdropImage && (
-        <div
-          className="viewer-backdrop"
-          style={{ backgroundImage: `url(${backdropImage})` }}
-        />
+      {/* PC Layout wrapper */}
+      {isPC ? (
+        <div className="viewer-wrapper">
+          {/* Blurred backdrop */}
+          {backdropImage && (
+            <div
+              className="viewer-backdrop"
+              style={{ backgroundImage: `url(${backdropImage})` }}
+            />
+          )}
+
+          {/* Viewer Container */}
+          <div className="viewer-container">
+            <ViewerComponent {...viewerProps} />
+
+            {/* CTA Button */}
+            {cta && <CTAButton config={cta} />}
+          </div>
+        </div>
+      ) : (
+        /* Mobile Layout */
+        <div className="relative h-screen">
+          <ViewerComponent {...viewerProps} />
+
+          {/* CTA Button */}
+          {cta && <CTAButton config={cta} />}
+        </div>
       )}
-
-      {/* Viewer Container */}
-      <div className={isPC ? "viewer-container" : ""}>
-        <ViewerComponent slides={slides} onSlideChange={setCurrentSlide} />
-
-        {/* CTA Button */}
-        {cta && <CTAButton config={cta} />}
-      </div>
 
       {/* Slide progress for accessibility */}
       <div className="sr-only" aria-live="polite">
