@@ -1,5 +1,23 @@
 import type { Metadata, Viewport } from "next";
+import { Noto_Sans_JP, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+
+// Optimized font loading with Next.js Font System for Core Web Vitals
+const notoSansJP = Noto_Sans_JP({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+  variable: "--font-noto-sans-jp",
+  preload: true,
+});
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
+  variable: "--font-plus-jakarta-sans",
+  preload: true,
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -31,7 +49,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ja">
+    <html
+      lang="ja"
+      className={`${notoSansJP.variable} ${plusJakartaSans.variable}`}
+    >
       <body className="antialiased">{children}</body>
     </html>
   );

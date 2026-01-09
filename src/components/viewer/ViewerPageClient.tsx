@@ -57,6 +57,7 @@ interface ViewerPageClientProps {
 }
 
 export function ViewerPageClient({ lpId }: ViewerPageClientProps) {
+  const demoMode = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
   const [lp, setLp] = useState<LP | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -80,7 +81,11 @@ export function ViewerPageClient({ lpId }: ViewerPageClientProps) {
         }
       } catch {
         if (mounted) {
-          setError("LPの取得に失敗しました");
+          if (demoMode && lpId === "demo") {
+            setLp(fallbackLP);
+          } else {
+            setError("LPの取得に失敗しました");
+          }
         }
       } finally {
         if (mounted) {
@@ -93,12 +98,28 @@ export function ViewerPageClient({ lpId }: ViewerPageClientProps) {
     return () => {
       mounted = false;
     };
-  }, [lpId]);
+  }, [lpId, demoMode]);
 
+  // Skeleton loading for better CLS (Cumulative Layout Shift)
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[var(--surface-base)]">
-        <p className="text-[var(--text-secondary)]">読み込み中...</p>
+      <div className="flex min-h-screen flex-col bg-[var(--surface-base)]">
+        {/* Progress bar skeleton */}
+        <div className="skeleton h-[3px] w-full" />
+
+        {/* Main content skeleton */}
+        <div className="flex flex-1 items-center justify-center p-4">
+          <div className="w-full max-w-[430px]">
+            <div className="skeleton skeleton-image" />
+          </div>
+        </div>
+
+        {/* CTA button skeleton */}
+        <div className="p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
+          <div className="mx-auto max-w-[430px]">
+            <div className="skeleton skeleton-button" />
+          </div>
+        </div>
       </div>
     );
   }
