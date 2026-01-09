@@ -1,6 +1,8 @@
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
   signOut as firebaseSignOut,
   onAuthStateChanged,
   sendPasswordResetEmail,
@@ -9,6 +11,12 @@ import {
   UserCredential,
 } from "firebase/auth";
 import { getAuthInstance, isFirebaseConfigured } from "./config";
+
+// Google OAuth Provider
+const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({
+  prompt: "select_account",
+});
 
 export type AuthUser = User;
 
@@ -52,6 +60,14 @@ export async function signIn(
   }
   const auth = getAuthInstance();
   return signInWithEmailAndPassword(auth, email, password);
+}
+
+export async function signInWithGoogle(): Promise<UserCredential> {
+  if (!isFirebaseConfigured()) {
+    throw new FirebaseNotConfiguredError();
+  }
+  const auth = getAuthInstance();
+  return signInWithPopup(auth, googleProvider);
 }
 
 export async function signOut(): Promise<void> {
